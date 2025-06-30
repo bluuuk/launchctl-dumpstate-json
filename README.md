@@ -52,32 +52,106 @@ options:
 
 ### Parsing a Specific Service
 
-Let's say you want to get detailed information about the `com.apple.runningboardd` service in JSON format:
+Let's say you want to get detailed information about the `system/com.apple.systemstats.analysis`:
+
+We go from 
 
 ```bash
-❯ launchctl print system/com.apple.runningboardd | uv run ldumpj -p
+❯ launchctl print system/com.apple.systemstats.analysis
+system/com.apple.systemstats.analysis = {
+        active count = 2
+        path = /System/Library/LaunchDaemons/com.apple.systemstats.analysis.plist
+        type = LaunchDaemon
+        state = running
+
+        program = /usr/sbin/systemstats
+        arguments = {
+                /usr/sbin/systemstats
+                --daemon
+        }
+
+        default environment = {
+                PATH => /usr/bin:/bin:/usr/sbin:/sbin
+        }
+
+        environment = {
+                MallocSpaceEfficient => 1
+                XPC_SERVICE_NAME => com.apple.systemstats.analysis
+        }
+
+        domain = system
+        minimum runtime = 60
+        base minimum runtime = 60
+        exit timeout = 5
+        runs = 1
+        pid = 103
+        immediate reason = speculative
+        forks = 1
+        execs = 1
+        initialized = 1
+        trampolined = 1
+        started suspended = 0
+        proxy started suspended = 0
+        last exit code = (never exited)
+
+        endpoints = {
+                "com.apple.systemstats.analysis" = {
+                        port = 0x3803
+                        active = 1
+                        managed = 1
+                        reset = 0
+                        hide = 0
+                        watching = 0
+                }
+        }
+
+        spawn type = adaptive (6)
+        jetsam priority = 90
+        jetsam memory limit (active, soft) = 150 MB
+        jetsam memory limit (inactive, soft) = 150 MB
+        jetsamproperties category = daemon
+        jetsam thread limit = 32
+        cpumon = default
+        exponential throttling grace limit = 10
+        probabilistic guard malloc policy = {
+                activation rate = 1/1000
+                sample rate = 1/0
+        }
+
+        properties = keepalive | runatload | supports transactions | inferred program | system service | exponential throttling | tle system
+}
+```
+
+to
+
+```bash
+❯ launchctl print "system/com.apple.systemstats.analysis" | uvx git+https://github.com/bluuuk/launchctl-dumpstate-json -p
 {
- "system/com.apple.runningboardd": {
-  "active count": 3,
-  "path": "/System/Library/LaunchDaemons/com.apple.runningboardd.plist",
+ "system/com.apple.systemstats.analysis": {
+  "active count": 2,
+  "path": "/System/Library/LaunchDaemons/com.apple.systemstats.analysis.plist",
   "type": "LaunchDaemon",
   "state": "running",
-  "program": "/usr/libexec/runningboardd",
+  "program": "/usr/sbin/systemstats",
+  "arguments": [
+   "/usr/sbin/systemstats",
+   "--daemon"
+  ],
   "default environment": {
    "PATH": "/usr/bin:/bin:/usr/sbin:/sbin"
   },
   "environment": {
    "MallocSpaceEfficient": 1,
-   "XPC_SERVICE_NAME": "com.apple.runningboardd"
+   "XPC_SERVICE_NAME": "com.apple.systemstats.analysis"
   },
   "domain": "system",
-  "minimum runtime": 1,
-  "base minimum runtime": 1,
+  "minimum runtime": 60,
+  "base minimum runtime": 60,
   "exit timeout": 5,
   "runs": 1,
-  "pid": 170,
-  "immediate reason": "ipc (mach)",
-  "forks": 0,
+  "pid": 103,
+  "immediate reason": "speculative",
+  "forks": 1,
   "execs": 1,
   "initialized": 1,
   "trampolined": 1,
@@ -85,16 +159,8 @@ Let's say you want to get detailed information about the `com.apple.runningboard
   "proxy started suspended": 0,
   "last exit code": "(never exited)",
   "endpoints": {
-   "com.apple.runningboard": {
-    "port": 69891,
-    "active": 1,
-    "managed": 1,
-    "reset": 0,
-    "hide": 0,
-    "watching": 0
-   },
-   "com.apple.runningboard.resource_notify": {
-    "port": 69639,
+   "com.apple.systemstats.analysis": {
+    "port": 14339,
     "active": 1,
     "managed": 1,
     "reset": 0,
@@ -103,19 +169,18 @@ Let's say you want to get detailed information about the `com.apple.runningboard
    }
   },
   "spawn type": "adaptive (6)",
-  "jetsam priority": 180,
-  "jetsam memory limit (active, soft)": "50 MB",
-  "jetsam memory limit (inactive, soft)": "50 MB",
+  "jetsam priority": 90,
+  "jetsam memory limit (active, soft)": "150 MB",
+  "jetsam memory limit (inactive, soft)": "150 MB",
   "jetsamproperties category": "daemon",
   "jetsam thread limit": 32,
   "cpumon": "default",
   "exponential throttling grace limit": 10,
-  "job state": "running",
   "probabilistic guard malloc policy": {
    "activation rate": "1/1000",
    "sample rate": "1/0"
   },
-  "properties": "supports transactions | supports pressured exit | system service | exponential throttling | tle system"
+  "properties": "keepalive | runatload | supports transactions | inferred program | system service | exponential throttling | tle system"
  }
 }
 ```
