@@ -1,5 +1,5 @@
 
-# `ldumpj`: Bridging `launchctl` Output to Machine-Readable JSON
+# `ldumpj`: Bridging `launchctl` Output to Processable JSON
 
 While `launchctl` is an essential tool for managing macOS services, its output is notoriously difficult for programs to parse. `ldumpj` is a command-line utility that tackles this challenge head-on by converting the human-readable output of `launchctl` into structured JSON. Internally, we parse the preprocessed output with a LALR grammer and transform the resulting AST into python objects.
 
@@ -54,7 +54,7 @@ options:
 Let's say you want to get detailed information about the `com.apple.runningboardd` service in JSON format:
 
 ```bash
-❯ launchctl print system/com.apple.runningboardd | uv run dumpstate2json -p
+❯ launchctl print system/com.apple.runningboardd | uv run ldumpj -p
 {
  "system/com.apple.runningboardd": {
   "active count": 3,
