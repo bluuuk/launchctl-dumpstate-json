@@ -24,6 +24,7 @@ For now, use `uv` to directly use the package, as you only need to use it likely
 ```bash
 launchctl dumpstate | uvx git+https://github.com/bluuuk/launchctl-dumpstate-json 
 ```
+Otherwise, use `git clone https://github.com/bluuuk/launchctl-dumpstate-json` and then use `uv run ldumpj` 
 
 -----
 
@@ -148,6 +149,7 @@ Here are some features planned for future releases:
 
 - [ ] Enhance performance and memory efficiency for very large `launchctl dumpstate` outputs. But for now, it should be fast enough
 - [ ] Improved resiliency: Further refine the parsing logic to handle unexpected variations in `launchctl` output more gracefully.
+- [ ] Improve packaging
 
 -----
 
