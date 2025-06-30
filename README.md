@@ -19,14 +19,10 @@ Automating tasks that involve `launchctl dumpstate` or `launchctl print` can be 
 
 ## Installation
 
-You can install `launchctl-dumpstate-json` using `pip`:
-
-TODO
-
-Or, if you prefer to use `uv`:
+For now, use `uv` to directly use the package, as you only need to use it likely once. 
 
 ```bash
-uv run 
+launchctl dumpstate | uvx git+https://github.com/bluuuk/launchctl-dumpstate-json 
 ```
 
 -----
