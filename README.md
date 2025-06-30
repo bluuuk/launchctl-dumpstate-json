@@ -23,10 +23,6 @@ You can install `launchctl-dumpstate-json` using `pip`:
 
 TODO
 
-```bash
-pip install launchctl-dumpstate-json
-````
-
 Or, if you prefer to use `uv`:
 
 ```bash
@@ -129,16 +125,17 @@ Let's say you want to get detailed information about the `com.apple.runningboard
 
 ### Combining with `jq` for Powerful Filtering
 
-The true power of JSON output shines when combined with tools like `jq`. For instance, to get a list of all `launchctl` service keys:
+The true power of JSON output shines when combined with tools like `jq`. For instance, to get a list of all loaded services:
 
 ```bash
-❯ launchctl dumpstate | uv run dumpstate2json -p | jq 'keys'
+❯ launchctl dumpstate | uv run ldumpj -p | jq 'keys'
 ```
 
 -----
 
 ## Performance
-Here's how `ldumpj` performs on various test inputs:
+
+Here's how `ldumpj` performs on various test `dumpstate` inputs:
 
 ```bash
 ❯ for i in test/*; do time uv run ldumpj -i "$i" -o /dev/null ; done
@@ -147,20 +144,14 @@ uv run ldumpj -i "$i" -o /dev/null  1.04s user 0.02s system 99% cpu 1.073 total
 uv run ldumpj -i "$i" -o /dev/null  1.38s user 0.03s system 99% cpu 1.415 total
 ```
 
-As you can see, the tool consistently processes output efficiently, with high CPU utilization during the parsing phase.
-
 -----
 
 ## Future Enhancements
 
-We're always looking to improve `launchctl-dumpstate-json`. Here are some features planned for future releases:
+Here are some features planned for future releases:
 
-  * **Stream-based processing:** Enhance performance and memory efficiency for very large `launchctl dumpstate` outputs.
-  * **Improved resiliency:** Further refine the parsing logic to handle unexpected variations in `launchctl` output more gracefully.
-
------
-
-Feel free to open an issue or submit a pull request if you have suggestions or encounter any problems\!
+- [ ] Enhance performance and memory efficiency for very large `launchctl dumpstate` outputs. But for now, it should be fast enough
+- [ ] Improved resiliency: Further refine the parsing logic to handle unexpected variations in `launchctl` output more gracefully.
 
 -----
 
