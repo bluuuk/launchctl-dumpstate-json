@@ -5,6 +5,18 @@ import argparse
 from lark import Lark
 from lark import Transformer_NonRecursive
 import sys
+from .model import LauchctlService
+
+FORBIDDEN_KEYS = [
+    "BSServiceDomains",
+    "VSCODE_NLS_CONFIG"
+]
+
+FORBIDDEN = set(
+    [
+        "submitted job. ignore execute allowed"
+    ]
+)
 
 def fixup(malformed : str) -> str:
     """ 
@@ -27,6 +39,8 @@ def fixup(malformed : str) -> str:
             }
             
             will not be enclosed with quotes
+        3)
+            Randomly wrong entries like `submitted job. ignore execute allowed`
 
     """
     def _inner(malformed_input : List[str]):
@@ -38,9 +52,12 @@ def fixup(malformed : str) -> str:
             """
                 remove empty lines
                 remove BSServiceDomains as it maps to a JSON which is hard to parse
+                remove VSCODE_NLS_CONFIG as         '''     ''' 
             """
             line = line.strip()
-            if line == "" or "BSServiceDomains" in line:
+            if line == "" or \
+                any((keyword in line) for keyword in FORBIDDEN_KEYS) or \
+                line in FORBIDDEN:
                 continue
             
             """
@@ -98,9 +115,6 @@ def fixup(malformed : str) -> str:
     return "\n".join(_inner(malformed.splitlines()))
 
 class CustomTransformer(Transformer_NonRecursive):
-    
-    # array = list 
-    # collection = list
     
     NUM_HEX_PATTERN = re.compile("[A-Fa-f0-9]+")
     
@@ -191,10 +205,17 @@ def main():
     parser.add_argument('-i','--input',type=argparse.FileType('r'),help="Input file, defaults to stdin",default=sys.stdin)
     parser.add_argument('-o','--output',type=argparse.FileType('w'),help="Output file, defaults to stdout",default=sys.stdout)
     parser.add_argument('-p','--pretty',action="store_true",help="JSON intendation")
+    parser.add_argument('-m','--model',action="store_true",help="Validate JSON with model")
     
     args = parser.parse_args()
     data = args.input.read()
     data = fixup(data)
     data = grammar.parse("{" + data + "}")
     
-    json.dump(data,args.output,indent=args.pretty or None)
+    if args.model:
+        for service_name,service_json in data.items():
+            print(service_name,service_json)
+            LauchctlService(**service_json).model_dump()
+        #json.dump(applied_models,args.output,indent=args.pretty or None)
+    else:
+        json.dump(data,args.output,indent=args.pretty or None)
