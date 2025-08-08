@@ -197,7 +197,7 @@ ESCAPED_SINGLE_QUOTE: /\'[^\']+\'/
 def main():
     # https://docs.python.org/3/howto/argparse.html
     parser = argparse.ArgumentParser(
-        prog='dumpstate2json',
+        prog='ldumpj',
         description='Parses the output of `launchctl dumpstate` and `launchctl print` into json',
         epilog='Text at the bottom of help'
     )
@@ -213,7 +213,7 @@ def main():
     data = grammar.parse("{" + data + "}")
     
     if args.model:
-        for service_name,service_json in data.items():
+        for service_name,service_json in d9ata.items():
             print(service_name,service_json)
             LauchctlService(**service_json).model_dump()
         #json.dump(applied_models,args.output,indent=args.pretty or None)
