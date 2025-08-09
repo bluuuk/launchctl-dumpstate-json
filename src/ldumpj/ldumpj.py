@@ -7,16 +7,14 @@ from lark import Transformer_NonRecursive
 import sys
 from .model import LauchctlService
 
-FORBIDDEN_KEYS = [
+FORBIDDEN = [
+    # keys
     "BSServiceDomains",
-    "VSCODE_NLS_CONFIG"
+    "VSCODE_NLS_CONFIG",
+    # key value without structure (e.g. missing =)
+    "submitted job. ignore execute allowed",
+    "panic on consecutive crashes (0)",
 ]
-
-FORBIDDEN = set(
-    [
-        "submitted job. ignore execute allowed"
-    ]
-)
 
 def fixup(malformed : str) -> str:
     """ 
@@ -53,11 +51,10 @@ def fixup(malformed : str) -> str:
                 remove empty lines
                 remove BSServiceDomains as it maps to a JSON which is hard to parse
                 remove VSCODE_NLS_CONFIG as         '''     ''' 
+                remove malformed key=value relations with do not have a key= part
             """
             line = line.strip()
-            if line == "" or \
-                any((keyword in line) for keyword in FORBIDDEN_KEYS) or \
-                line in FORBIDDEN:
+            if line == "" or any((line.startswith(keyword)) for keyword in FORBIDDEN):
                 continue
             
             """
@@ -213,9 +210,11 @@ def main():
     data = grammar.parse("{" + data + "}")
     
     if args.model:
-        for service_name,service_json in d9ata.items():
-            print(service_name,service_json)
-            LauchctlService(**service_json).model_dump()
-        #json.dump(applied_models,args.output,indent=args.pretty or None)
+        models = dict()
+        for service_name,service_json in data.items():
+            models[service_name] = LauchctlService(**service_json).model_dump()
+        json.dump(models,args.output,indent=args.pretty or None)
     else:
         json.dump(data,args.output,indent=args.pretty or None)
+        
+        
