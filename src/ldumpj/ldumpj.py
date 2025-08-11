@@ -17,29 +17,18 @@ FORBIDDEN = [
 ]
 
 def fixup(malformed : str) -> str:
-    """ 
-        This fixes 1) malformed entries and add qoutes to ease parsing
-        
-        1)
-            "graphData" => 				"client" => "com.apple.modelcatalogd"
-            
-        or
+    """
+    Pre-processes the raw launchctl output to correct common formatting issues
+    and inconsistencies, making it parsable by the LALR grammar.
 
-            PRODUCT_INFO_FILTER_DISABLE => 
-		    XPC_SERVICE_NAME => com.apple.remoted
-        2)
-            creator = talagentd[69851]
-                'creator = talagentd[69851]'
-                
-            but 
-            
-            creator = {
-            }
-            
-            will not be enclosed with quotes
-        3)
-            Randomly wrong entries like `submitted job. ignore execute allowed`
-
+    This function performs several key transformations:
+    1.  Corrects malformed "=>" expressions where a value is missing,
+        assigning "none" as a default value.
+    2.  Handles lines that end with an "=" but have no value, assigning "none".
+    3.  Wraps string literals and key-value pairs in single quotes to ensure
+        they are correctly identified as tokens by the grammar.
+    4.  Filters out empty lines and lines containing forbidden keywords that
+        are known to cause parsing issues.
     """
     def _inner(malformed_input : List[str]):
         if malformed_input[0].strip() == "":
@@ -54,7 +43,7 @@ def fixup(malformed : str) -> str:
                 remove malformed key=value relations with do not have a key= part
             """
             line = line.strip()
-            if line == "" or any((line.startswith(keyword)) for keyword in FORBIDDEN):
+            if not line or any((line.startswith(keyword)) for keyword in FORBIDDEN):
                 continue
             
             """
@@ -104,7 +93,7 @@ def fixup(malformed : str) -> str:
                     line.endswith("["),
                     line.endswith("]") and not "[" in line, # case: creator = talagentd[69851]
                 ]
-            ):  
+            ):
                 yield line   
             else:       
                 # this also includes case: properties = 
@@ -116,6 +105,9 @@ class CustomTransformer(Transformer_NonRecursive):
     NUM_HEX_PATTERN = re.compile("[A-Fa-f0-9]+")
     
     def resolve_type(self,value : str):
+        """
+        Converts a string value to its most appropriate type (bool, None, int, or str).
+        """
         match value:
             case "true": return True
             case "false": return False
@@ -133,17 +125,30 @@ class CustomTransformer(Transformer_NonRecursive):
         return value
     
     def unqoute(self,value):
-        return value.replace("'","").replace("\"","")
+        """
+        Removes single or double quotes from the start and end of a string.
+        """
+        return value.replace("'","" ).replace("\"","")
     
     def key(self, val : List[str]):
+        """
+        Processes a key token from the grammar, unquoting and stripping it.
+        """
         (string,) = val
         return self.unqoute(string).strip()
     
     def header(self,value):
+        """
+        Processes a header token (a key-value pair that starts a new section).
+        """
         (name,child) = value
         return self.unqoute(name),child
     
     def value(self, val : List[str]):
+        """
+        Processes a value token, parsing it into a key-value tuple if it contains
+        an assignment operator ("=" or "=>"), or returning it as a simple string.
+        """
         (string,) = val
         string = self.unqoute(string)
         
@@ -159,13 +164,21 @@ class CustomTransformer(Transformer_NonRecursive):
     
     
     def collection(self,values):
+        """
+        Transforms a collection of parsed values into a dictionary if all items are
+        key-value pairs, otherwise returns a list.
+        """
         if all(type(v) == tuple for v in values):
             return dict(values)
         else:
             return list(values)
             
     def array(self,values):
+        """
+        Transforms a parsed array into a dictionary, using the index as the key.
+        """
         return dict((int(k),v) for k,v in values)
+
     
 grammar = Lark(
 r""" 
