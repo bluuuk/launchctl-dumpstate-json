@@ -31,12 +31,6 @@ class Socket(BaseModel):
     secure_socket_with_key: Optional[str] = Field(None, alias='SecureSocketWithKey', description="A key for secure socket options.")
     sock_path_mode: Optional[int] = Field(None, alias='SockPathMode', description="The mode of the socket path.")
 
-class ProgramType(str, Enum):
-    DAEMON = "LaunchDaemon"
-    XPC_SERVICE = "XPCService"
-    SUBMITTED = "Submitted"
-    SYSTEM = "system"
-
 class ServiceDomain(StrEnum):
     SYSTEM = "system"
     USER = "user"
@@ -52,11 +46,11 @@ class LauchctlService(BaseModel):
 
     active_count: int = Field(alias="active count", description="The number of active processes for this service.")
     path: Optional[str] = Field(None,description="The path to the service's property list file.")
-    type: Optional[ProgramType] = Field(None,description="The type of the service.")
+    type: Optional[str] = Field("",description="The type of the service.")
     state: Optional[str] = Field(None, description="The current state of the service.")
     
-    program: Optional[str] = Field(description="The program to be executed.")
-    arguments: Optional[List[str]] = Field([], description="The arguments to pass to the program.")
+    program: Optional[str] = Field("",description="The program to be executed.")
+    arguments: Optional[Union[List[str], Dict[str, Any]]] = Field(default_factory=list, description="The arguments to pass to the program.")
     
     spawn_type: Optional[str] = Field(None, alias="spawn type", description="The spawn type of the service.")
     last_exit_code: Optional[Union[str, int]] = Field(None, alias="last exit code", description="The last exit code of the service.")
@@ -66,7 +60,10 @@ class LauchctlService(BaseModel):
     
     domain: Optional[str] = Field(None, description="The domain the service is running in.")
     endpoints: Optional[Union[Dict[str, EndPoint],List[str]]] = Field(None, description="The endpoints exposed by the service.")
-    services: Optional[List[str]] = Field(None, description="The services provided by this service.")
+    services: Optional[Union[List[str], Dict[str, Any]]] = Field(
+        default_factory=dict,
+        description="The services provided by this service (list or map)."
+    )
     
     runs: Optional[int] = Field(None, description="The number of times the service has run.")
     pid: Optional[int] = Field(None, description="The process ID of the service.")
@@ -84,7 +81,7 @@ class LauchctlService(BaseModel):
     jetsamproperties_category: Optional[str] = Field(None, alias="jetsamproperties category", description="The jetsam properties category.")
     jetsam_thread_limit: Optional[Union[str, int]] = Field(None, alias="jetsam thread limit", description="The jetsam thread limit.")
 
-    properties: List[str] = Field([], description="A list of properties for the service.")
+    properties: List[str] = Field(default_factory=list, description="A list of properties for the service.")
 
     # from man launchd.plist
     disabled: bool = Field(False, description="Specifies whether the job is disabled.")

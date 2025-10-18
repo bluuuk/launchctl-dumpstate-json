@@ -6,14 +6,11 @@ from lark import Lark
 from lark import Transformer_NonRecursive
 import sys
 from .model import LauchctlService
+from pydantic_core import ValidationError
 
+# all other keys are later cleaned,
 FORBIDDEN = [
-    # keys
-    "BSServiceDomains",
-    "VSCODE_NLS_CONFIG",
-    # key value without structure (e.g. missing =)
-    "submitted job. ignore execute allowed",
-    "panic on consecutive crashes (0)",
+    "BSServiceDomains", # this is a json object which is unparsable for the current grammer
 ]
 
 def fixup(malformed : str) -> str:
@@ -149,6 +146,7 @@ class CustomTransformer(Transformer_NonRecursive):
         Processes a value token, parsing it into a key-value tuple if it contains
         an assignment operator ("=" or "=>"), or returning it as a simple string.
         """
+        
         (string,) = val
         string = self.unqoute(string)
         
@@ -159,7 +157,7 @@ class CustomTransformer(Transformer_NonRecursive):
         """
         
         if " = " in string:
-            print(string,string.split(" = ", maxsplit=1))
+            a,b = string.split(" = ", maxsplit=1)
             return (self.unqoute(a),self.resolve_type(b))
             
         if " => " in string:
@@ -211,7 +209,6 @@ ESCAPED_SINGLE_QUOTE: /\'[^\']+\'/
 ,parser="lalr",start="container",transformer=CustomTransformer())
 
 def main():
-    # https://docs.python.org/3/howto/argparse.html
     parser = argparse.ArgumentParser(
         prog='ldumpj',
         description='Parses the output of `launchctl dumpstate` and `launchctl print` into json',
@@ -231,7 +228,23 @@ def main():
     if args.model:
         models = dict()
         for service_name,service_json in data.items():
-            models[service_name] = LauchctlService(**service_json).model_dump()
+            # clean up for non dict values
+            if isinstance(service_json, List):
+                valid_items = []
+                for entry in service_json:
+                    if isinstance(entry,Tuple) and len(entry) == 2:
+                        valid_items.append(entry)
+                    else:
+                        print(f"Ignore value `{entry}` in {service_name}",file=sys.stderr)
+                service_json = dict(valid_items)
+            try:
+                models[service_name] = LauchctlService(**service_json).model_dump()
+            except ValidationError as e:
+                raise ValueError(
+                    f"Error while parsing service '{service_name}'. "
+                    f"Partial data:\n{service_json}\n"
+                    f"Original error: {e.errors()[0]['msg']} (field: {e.errors()[0]['loc']})"
+                ) from e
         json.dump(models,args.output,indent=args.pretty or None)
     else:
         json.dump(data,args.output,indent=args.pretty or None)
