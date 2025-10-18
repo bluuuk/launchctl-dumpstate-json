@@ -136,12 +136,18 @@ class CustomTransformer(Transformer_NonRecursive):
         (string,) = val
         string = self.unqoute(string)
         
+        """
+            be vary of things like `checked allocations = 0 (queried = 1)` which results into a split like
+                ['checked allocations','0 (queried','1)']
+            Therefore, having maxsplit set to 1 for exactly one key=value
+        """
+        
         if " = " in string:
-            a,b = string.split(" = ")
+            print(string,string.split(" = ", maxsplit=1))
             return (self.unqoute(a),self.resolve_type(b))
             
         if " => " in string:
-            a,b = string.split(" => ")
+            a,b = string.split(" => ", maxsplit=1)
             return (self.unqoute(a),self.resolve_type(b))
         
         return string.strip()
