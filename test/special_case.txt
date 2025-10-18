@@ -1,0 +1,68 @@
+system/com.apple.bcmwlan-0x100000587 = {
+	active count = 1
+	path = (submitted by driverkitd.81)
+	type = Submitted
+	managed_by = com.apple.driverkitd
+	state = running
+	bundle id = com.apple.DriverKit-AppleBCMWLAN
+
+	program = /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN
+	arguments = {
+		/System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN
+		com.apple.bcmwlan
+		0x100000587
+		com.apple.DriverKit-AppleBCMWLAN
+	}
+
+	sandbox profile = com.apple.dext
+	default environment = {
+		PATH => /usr/bin:/bin:/usr/sbin:/sbin
+	}
+
+	environment = {
+		XPC_SERVICE_NAME => com.apple.bcmwlan-0x100000587
+	}
+
+	domain = system
+	username = _driverkit
+
+	minimum runtime = 10
+	base minimum runtime = 10
+	exit timeout = 3
+	runs = 1
+	pid = 112
+	immediate reason = launch job demand
+	forks = 0
+	execs = 1
+	initialized = 1
+	trampolined = 1
+	started suspended = 0
+	proxy started suspended = 0
+	uses proxy = 1
+	spawn reason filter = launch job demand
+	last exit code = (never exited)
+	retain only = 0
+
+	dext checkin port = 0x22c23 [type 27, object 0]
+
+	spawn type =  (7)
+	jetsam priority = 30
+	jetsam memory limit (active, soft) = 36 MB
+	jetsam memory limit (inactive, hard) = 36 MB
+	jetsamproperties category = DriverKit
+	submitted job. ignore execute allowed
+	cpumon = default
+	resource limits = {
+		core (soft) => (infinity)
+		core (hard) => (infinity)
+	}
+
+	exponential throttling grace limit = 10
+	job state = running
+	probabilistic guard malloc policy = {
+		activation rate = 1/1000
+		sample rate = 1/0
+	}
+
+	properties = partial import | runatload | supports transactions | supports pressured exit | launch only once | inferred program | platform binary | null bootstrap port | exponential throttling | abandon during shutdown | needs proxy
+}
