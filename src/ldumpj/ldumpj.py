@@ -22,6 +22,9 @@ def main():
     args = parser.parse_args()
     raw_data = args.input.read()
     parsed = parse_launchctl_output(raw_data, validate_model=args.model)
+    if args.model:
+        for key in parsed:
+            parsed[key] = parsed[key].model_dump()
     json.dump(parsed, args.output, indent=2 if args.pretty else None)
         
         
