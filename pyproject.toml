@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ldumpj = "ldumpj.__init__:main"
+ldumpj = "libdumpj.cli:main"
 
 [build-system]
 requires = ["hatchling"]
