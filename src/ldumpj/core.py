@@ -221,9 +221,8 @@ def parse_launchctl_output(raw: str, validate_model: bool = False) -> dict:
     try:
         data = grammar.parse("{" + data + "}")
     except UnexpectedToken as e:
-        context = data.splitlines()[e.line-2:e.line+2]
+        context = data.splitlines()[min(0,e.line-2):max(data.count("\n",e.line+2))]
         raise ValueError(f"Error at within context:\n{"\n".join(context)}") from e
-        
 
     if not validate_model:
         return data
