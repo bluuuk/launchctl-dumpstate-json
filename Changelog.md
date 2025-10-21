@@ -64,3 +64,20 @@ Ignore value `submitted job. ignore execute allowed` in system/com.vmware.IDHelp
 Ignore value `panic on consecutive crashes (0)` in system/com.apple.watchdogd
 Ignore value `panic on consecutive crashes (0)` in system/com.apple.kernelmanagerd
 ```
+
+# Strucutre recursion
+
+```
+	disabled services = {
+{
+	"com.openssh.sshd" => false
+	"com.apple.dhcp6d" => true
+	"com.apple.bootpd" => true
+	"com.apple.ftp-proxy-embedded" => false
+}
+	}
+```
+
+This looks weird as hell, but I extended the grammer to support recusrive container:
+
+`collection: (header | value)* | container`

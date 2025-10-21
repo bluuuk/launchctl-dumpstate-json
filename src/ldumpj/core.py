@@ -1,7 +1,8 @@
-from typing import *
 import re 
+from typing import *
 from lark import Lark
 from lark import Transformer_NonRecursive
+from lark.exceptions import UnexpectedToken
 from .model import LauchctlService
 
 # all other keys are later cleaned,
@@ -189,7 +190,7 @@ header: key ("="  | "=>") (container | value)
 ?container: ("{" collection "}"?) | ("[" array "]")
 
 array: (header | value)*
-collection: (header | value)*
+collection: (header | value)* | container
 
 value: ESCAPED_SINGLE_QUOTE | ESCAPED_STRING
 key:   UNESCAPED_KEY | ESCAPED_STRING | SIGNED_NUMBER
@@ -217,7 +218,12 @@ def parse_launchctl_output(raw: str, validate_model: bool = False) -> dict:
         dict: Parsed JSON-like dictionary.
     """
     data = fixup(raw)
-    data = grammar.parse("{" + data + "}")
+    try:
+        data = grammar.parse("{" + data + "}")
+    except UnexpectedToken as e:
+        context = data.splitlines()[e.line-2:e.line+2]
+        raise ValueError(f"Error at within context:\n{"\n".join(context)}") from e
+        
 
     if not validate_model:
         return data
