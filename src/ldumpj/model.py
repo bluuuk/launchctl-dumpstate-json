@@ -46,7 +46,7 @@ class LauchctlService(BaseModel):
 
     active_count: int = Field(alias="active count", description="The number of active processes for this service.")
     path: Optional[str] = Field(None,description="The path to the service's property list file.")
-    type: Optional[str] = Field("",description="The type of the service.")
+    type: Optional[str] = Field(None,description="The type of the service.")
     state: Optional[str] = Field(None, description="The current state of the service.")
     
     program: Optional[str] = Field("",description="The program to be executed.")

@@ -56,19 +56,26 @@ def fixup(malformed : str) -> str:
                 case 1: 
                     a,b = line.split("=>",maxsplit=2)
                     b = b.strip()
+
                     if b == "":
                         yield "'" + a.lstrip() + " => none'"
                         continue
                     elif b == "}":
                         yield "'" + a.lstrip() + " => none'\n}"
                         continue
+                    
                 case _ if count >= 2:
                     splits = line.split("=>")
                     for split in splits[:-2]:
                         yield "'" + split.lstrip() + " => none'" 
-                    yield "'" + splits[-2].lstrip() + " =>" + splits[-1] + "'"
+                        
+                    a,b = splits[-2].lstrip(),splits[-1].strip()
+                    if b == "":
+                        yield "'" + a.lstrip() + " => none'"
+                    elif b == "}":
+                        yield "'" + a.lstrip() + " => none'\n}"
+                    
                     continue
-            
             """
                 fix case: properties = 
             """
@@ -221,7 +228,7 @@ def parse_launchctl_output(raw: str, validate_model: bool = False) -> dict:
     try:
         data = grammar.parse("{" + data + "}")
     except UnexpectedToken as e:
-        context = data.splitlines()[min(0,e.line-3):max(data.count("\n"),e.line+3)]
+        context = data.splitlines()[max(0,e.line-3):min(data.count("\n"),e.line+3)]
         raise ValueError(f"Error within context:\n{"\n".join(context)}") from e
 
     if not validate_model:

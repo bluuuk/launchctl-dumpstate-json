@@ -5,7 +5,7 @@ import argparse
 from lark import Lark
 from lark import Transformer_NonRecursive
 import sys
-from .core import parse_launchctl_output
+from .core import parse_launchctl_output,fixup
 
 def main():
     parser = argparse.ArgumentParser(
@@ -18,9 +18,15 @@ def main():
     parser.add_argument('-o','--output',type=argparse.FileType('w'),help="Output file, defaults to stdout",default=sys.stdout)
     parser.add_argument('-p','--pretty',action="store_true",help="JSON intendation")
     parser.add_argument('-m','--model',action="store_true",help="Validate JSON with model")
+    parser.add_argument('-fix','--fix',action="store_true",help="Only output the fixup")
+    
     
     args = parser.parse_args()
     raw_data = args.input.read()
+    if args.fix:
+        print(fixup(raw_data))
+        exit(0)
+    
     parsed = parse_launchctl_output(raw_data, validate_model=args.model)
     if args.model:
         for key in parsed:

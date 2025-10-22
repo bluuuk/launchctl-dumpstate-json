@@ -1,0 +1,335 @@
+system/com.apple.networkserviceproxy = {
+	active count = 8
+	path = /System/Library/LaunchDaemons/com.apple.networkserviceproxy.plist
+	state = running
+
+	program = /usr/libexec/networkserviceproxy
+	default environment = {
+		PATH => /usr/bin:/bin:/usr/sbin:/sbin
+	}
+
+	environment = {
+		XPC_SERVICE_NAME => com.apple.networkserviceproxy
+	}
+
+	domain = system
+	username = mobile
+
+	minimum runtime = 10
+	base minimum runtime = 10
+	exit timeout = 3
+	runs = 1
+	pid = 141
+	immediate reason = ipc (mach)
+	forks = 0
+	execs = 1
+	initialized = 1
+	trampolined = 1
+	started suspended = 0
+	proxy started suspended = 0
+	uses proxy = 1
+	last exit code = (never exited)
+
+	event triggers = {
+		MessageResponse => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.networkserviceproxy
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"SubscriptionCheckDate" => -1
+				"ODoHRestoreDate" => -1
+				"TokenIssuanceRestrictedUntilDate" => -1
+				"ProxyRestoreDate" => -1
+				"odohAuthRestoreDate" => -1
+				"SubscriptionCheckOnNetworkChange" => -1
+			}
+		}
+		new-handles => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.networkserviceproxy.file-descriptor-maintainer
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"aux-data" => {
+					"NSPServerAuxilaryData" => 					"NSPProxyAgentManagerAuxilaryData" => 				}
+				"handles-array" => [
+					0 = {
+						"file-descriptor" => 						"session-name" => "nsp_privacy_proxy_policy_session"
+						"type" => 1
+						"launch-owner-when-readable" => false
+					}
+					1 = {
+						"file-descriptor" => 						"type" => 3
+						"launch-owner-when-readable" => true
+						"control-unit" => 1
+						"key-material" => 					}
+					2 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					3 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					4 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					5 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					6 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					7 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					8 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					9 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					10 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					11 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 1
+						"configuration-identifier" => 					}
+					12 = {
+						"file-descriptor" => 						"session-type" => 0
+						"agent-uuid" => 						"type" => 2
+						"launch-owner-when-readable" => true
+						"agent-flags" => 0
+						"configuration-identifier" => 					}
+				]
+			}
+		}
+		RequiredItems => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.locationd-events
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"ClientName" => "/System/Library/PrivateFrameworks/NetworkServiceProxy.framework"
+			}
+		}
+		ApplicationDatabaseUpdated => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.distnoted.matching
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Name" => "com.apple.LaunchServices.DatabaseSeedingComplete"
+			}
+		}
+		ApplicationUninstalled => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.distnoted.matching
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Name" => "com.apple.LaunchServices.applicationUnregistered"
+			}
+		}
+		ApplicationInstalled => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.distnoted.matching
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Name" => "com.apple.LaunchServices.applicationRegistered"
+			}
+		}
+		SendMessage => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.networkserviceproxy
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"MessageID" => 0
+			}
+		}
+		com.apple.networkserviceproxy.reset => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.notifyd.matching
+			monitor = com.apple.notifyd
+			descriptor = {
+				"Notification" => "com.apple.networkserviceproxy.reset"
+			}
+		}
+		com.apple.trial.NamespaceUpdate.NETWORK_SERVICE_PROXY_CONFIG_UPDATE => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.notifyd.matching
+			monitor = com.apple.notifyd
+			descriptor = {
+				"Notification" => "com.apple.trial.NamespaceUpdate.NETWORK_SERVICE_PROXY_CONFIG_UPDATE"
+			}
+		}
+		com.apple.networkextension.app-paths-changed => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.notifyd.matching
+			monitor = com.apple.notifyd
+			descriptor = {
+				"Notification" => "com.apple.networkextension.app-paths-changed"
+			}
+		}
+		com.apple.CloudSubscriptionFeature.Changed => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.notifyd.matching
+			monitor = com.apple.notifyd
+			descriptor = {
+				"Notification" => "com.apple.CloudSubscriptionFeature.Changed"
+			}
+		}
+		com.apple.networkserviceproxy.metadata-refresh-22h => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.xpc.activity
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Interval" => 79200
+				"GracePeriod" => 3600
+				"ShouldWakeDevice" => true
+				"RequireInexpensiveNetworkConnectivity" => false
+				"RequireNetworkConnectivity" => true
+				"AllowBattery" => true
+			}
+		}
+		com.apple.networkserviceproxy.metadata-refresh-12h => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.xpc.activity
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Interval" => 43200
+				"RequireInexpensiveNetworkConnectivity" => true
+				"PowerNap" => true
+				"AllowBattery" => false
+				"Priority" => "Utility"
+			}
+		}
+		com.apple.networkserviceproxy.publish-daily-stats => {
+			keepalive = 0
+			service = com.apple.networkserviceproxy
+			stream = com.apple.xpc.activity
+			monitor = com.apple.UserEventAgent-System
+			descriptor = {
+				"Interval" => 86400
+				"GracePeriod" => 3600
+				"ShouldWakeDevice" => true
+				"RequireInexpensiveNetworkConnectivity" => false
+				"RequireNetworkConnectivity" => false
+				"AllowBattery" => true
+			}
+		}
+	}
+
+	endpoints = {
+		"com.apple.networkserviceproxy" = {
+			port = 0x2fa13
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+	}
+
+	event channels = {
+		"com.apple.locationd-events" = {
+			port = 0x5eb33
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+		"com.apple.networkserviceproxy.file-descriptor-maintainer" = {
+			port = 0x4f22b
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+		"com.apple.distnoted.matching" = {
+			port = 0x30903
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+		"com.apple.networkserviceproxy" = {
+			port = 0x30a03
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+		"com.apple.notifyd.matching" = {
+			port = 0x30b03
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+		"com.apple.xpc.activity" = {
+			port = 0x4da03
+			active = 1
+			managed = 1
+			reset = 0
+			hide = 0
+			watching = 0
+		}
+	}
+
+	spawn type = adaptive (6)
+	jetsam priority = 4
+	jetsam memory limit (active, soft) = 12 MB
+	jetsam memory limit (inactive, hard) = 6 MB
+	jetsamproperties category = daemon
+	jetsam thread limit = 32
+	jetsam soft port limit = 32768
+	jetsam hard port limit = 65536
+	cpumon = default
+	job state = running
+	persona set at = 199
+
+	properties = supports transactions | supports pressured exit | platform binary | exponential throttling | needs proxy
+}

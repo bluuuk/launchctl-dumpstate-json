@@ -81,3 +81,27 @@ Ignore value `panic on consecutive crashes (0)` in system/com.apple.kernelmanage
 This looks weird as hell, but I extended the grammer to support recusrive container:
 
 `collection: (header | value)* | container`
+
+# Multiple `=>` with last char of `}` to end collection
+
+```json
+descriptor = {
+	"aux-data" => {
+		"NSPServerAuxilaryData" => 					"NSPProxyAgentManagerAuxilaryData" => 				}
+```
+
+Causes this behaviour
+
+```
+descriptor = {
+"aux-data" => {
+'"NSPServerAuxilaryData"  => none'
+'"NSPProxyAgentManagerAuxilaryData"  =>                                 }'
+```
+
+```bash
+❯ cat test/problem4 | ldumpj -p | rg "NSPProxyAgentManagerAuxilaryData"
+            "NSPProxyAgentManagerAuxilaryData ": "\t\t\t\t}",
+```
+
+This was due to a missing case in fixup that only for **ONE** `=>` but the problem string had two `=>`
