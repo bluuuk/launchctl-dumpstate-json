@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
     raw_data = args.input.read()
     if args.fix:
-        print(fixup(raw_data))
+        print(fixup(raw_data),file=args.output)
         exit(0)
     
     parsed = parse_launchctl_output(raw_data, validate_model=args.model)
