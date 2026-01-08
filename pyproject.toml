@@ -5,7 +5,7 @@ description = "Parses the output of launchctl dumpstate and print into a json"
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "Lukas Boschanski", email = "ipadspass@tuta.com" }
+    { name = "Lukas Boschanski" }
 ]
 requires-python = ">=3.12"
 dependencies = [
@@ -14,11 +14,24 @@ dependencies = [
 ]
 
 [project.scripts]
-ldumpj = "libdumpj.cli:main"
+ldumpj = "ldumpj:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv.workspace]
+members = [
+    ".",
+]
+
+[tool.uv.sources]
+ldumpj = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "ldumpj",
+]
 
 [project.urls]
 Repository = "https://github.com/bluuuk/launchctl-dumpstate-json"

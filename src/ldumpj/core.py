@@ -1,5 +1,5 @@
-import re 
-from typing import *
+import re
+from typing import List 
 from lark import Lark
 from lark import Transformer_NonRecursive
 from lark.exceptions import UnexpectedToken
@@ -92,7 +92,7 @@ def fixup(malformed : str) -> str:
                 [
                     line.endswith("{") or line.endswith("}"),
                     line.endswith("["),
-                    line.endswith("]") and not "[" in line, # case: creator = talagentd[69851]
+                    line.endswith("]") and "[" not in line, # case: creator = talagentd[69851]
                 ]
             ):
                 yield line   
@@ -110,9 +110,12 @@ class CustomTransformer(Transformer_NonRecursive):
         Converts a string value to its most appropriate type (bool, None, int, or str).
         """
         match value:
-            case "true": return True
-            case "false": return False
-            case "none": return None
+            case "true": 
+                return True
+            case "false": 
+                return False
+            case "none": 
+                return None
 
         if self.NUM_HEX_PATTERN.match(value):
             try:
@@ -176,7 +179,7 @@ class CustomTransformer(Transformer_NonRecursive):
         Transforms a collection of parsed values into a dictionary if all items are
         key-value pairs, otherwise returns a list.
         """
-        if all(type(v) == tuple for v in values):
+        if all(isinstance(v,tuple) for v in values):
             return dict(values)
         else:
             return list(values)
@@ -193,7 +196,7 @@ r"""
 start: header
 header: key ("="  | "=>") (container | value)
 
-// "}"? is a hack malformed output to get to a parsing end
+// "}"? is a hack for malformed output to get to a parsing end
 ?container: ("{" collection "}"?) | ("[" array "]")
 
 array: (header | value)*

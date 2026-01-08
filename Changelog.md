@@ -1,4 +1,6 @@
-# Mac0S 26 type changes 
+# Error Fixing
+
+## Mac0S 26 type changes 
 
 ```
 ❯ rg "type = \w+" macos26.txt | tr -d "\t" | sort -u
@@ -46,7 +48,7 @@ type = user
 type = XPCService
 ```
 
-# Ignore values that dont have a key value structure
+## Ignore values that dont have a key value structure
 
 Now, I will just print them to stderr and ignore them.
 
@@ -65,7 +67,7 @@ Ignore value `panic on consecutive crashes (0)` in system/com.apple.watchdogd
 Ignore value `panic on consecutive crashes (0)` in system/com.apple.kernelmanagerd
 ```
 
-# Strucutre recursion
+## Strucutre recursion
 
 ```
 	disabled services = {
@@ -82,9 +84,9 @@ This looks weird as hell, but I extended the grammer to support recusrive contai
 
 `collection: (header | value)* | container`
 
-# Multiple `=>` with last char of `}` to end collection
+## Multiple `=>` with last char of `}` to end collection
 
-```json
+```
 descriptor = {
 	"aux-data" => {
 		"NSPServerAuxilaryData" => 					"NSPProxyAgentManagerAuxilaryData" => 				}
@@ -105,3 +107,7 @@ descriptor = {
 ```
 
 This was due to a missing case in fixup that only for **ONE** `=>` but the problem string had two `=>`
+
+# Prepare PyPi | 08.01.2026
+
+- Clean up project

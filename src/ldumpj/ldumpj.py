@@ -1,9 +1,5 @@
-from typing import *
 import json
-import re 
 import argparse
-from lark import Lark
-from lark import Transformer_NonRecursive
 import sys
 from .core import parse_launchctl_output,fixup
 
